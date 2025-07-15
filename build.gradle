@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure' version '2.11.2'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    // Selenium
+    implementation 'org.seleniumhq.selenium:selenium-java:4.34.0'
+    implementation 'org.seleniumhq.selenium:selenium-remote-driver:4.34.0'
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v138:4.34.0'
+
+    testImplementation 'com.codeborne:selenide:7.2.3'
+
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+
+    // Allure
+    testImplementation 'io.qameta.allure:allure-junit5:2.25.0'
+    testImplementation 'io.qameta.allure:allure-selenide:2.25.0'
+
+    // Logging (исправление SLF4J)
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+
+    // AspectJ для Allure
+    testImplementation 'org.aspectj:aspectjweaver:1.9.20.1'
+}
+
+test {
+    useJUnitPlatform()
+
+    systemProperty 'browser', System.getProperty('browser', 'chrome')
+    systemProperty 'selenoid', System.getProperty('selenoid', 'selenoid.autotests.cloud')
+    systemProperty 'baseUrl', System.getProperty('baseUrl', 'https://demoqa.com')
+    systemProperty 'remote.url',
+            "https://user1:1234@${System.getProperty('selenoid', 'selenoid.autotests.cloud')}/wd/hub"
+
+    systemProperty 'allure.results.directory', 'build/allure-results'
+}
+
+
+tasks.register('smoke_tests', Test) {
+    useJUnitPlatform {
+        includeTags("SMOKE")
+    }
+}
+
+allure {
+    version = '2.25.0'
+
+    useJUnit5 {
+        version = '2.25.0'
+    }
+}
