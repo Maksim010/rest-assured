@@ -9,8 +9,11 @@ repositories {
 
 dependencies {
     // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.38'
-    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    testCompileOnly 'org.projectlombok:lombok:1.18.38'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    testImplementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    testImplementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 
     // Selenium
     implementation 'org.seleniumhq.selenium:selenium-java:4.34.0'
@@ -19,6 +22,7 @@ dependencies {
 
     testImplementation 'com.codeborne:selenide:7.2.3'
 
+    testImplementation 'io.rest-assured:rest-assured:5.5.5'
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
@@ -33,18 +37,24 @@ dependencies {
 
     // AspectJ для Allure
     testImplementation 'org.aspectj:aspectjweaver:1.9.20.1'
+
+    testImplementation 'io.rest-assured:json-schema-validator:5.3.2'
+
 }
 
 test {
     useJUnitPlatform()
 
-    systemProperty 'browser', System.getProperty('browser', 'chrome')
-    systemProperty 'selenoid', System.getProperty('selenoid', 'selenoid.autotests.cloud')
-    systemProperty 'baseUrl', System.getProperty('baseUrl', 'https://demoqa.com')
-    systemProperty 'remote.url',
-            "https://user1:1234@${System.getProperty('selenoid', 'selenoid.autotests.cloud')}/wd/hub"
+    testLogging {
+        lifecycle {
+            events("started", "skipped", " failed", "standard_error")
+            exceptionFormat "short"
+        }
+    }
 
-    systemProperty 'allure.results.directory', 'build/allure-results'
+    systemProperty 'baseUrl', System.getProperty('baseUrl', 'http://localhost:8081/')
+    systemProperty 'basePath', System.getProperty('basePath', '/api/v1')
+
 }
 
 
