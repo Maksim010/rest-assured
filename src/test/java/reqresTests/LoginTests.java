@@ -37,13 +37,16 @@ public class LoginTests extends BaseReqresTest {
                 );
 
         String responseToken = given()
+                .log().uri()
+                .log().headers()
+                .log().body()
                 .body(authDto)
                 .contentType(JSON)
                 .when().
                 log().uri()
                 .post(AUTH_PATH)
                 .then()
-                .log().all()
+                .log().body()
                 .statusCode(200)
                 .extract()
                 .asString();
@@ -57,6 +60,10 @@ public class LoginTests extends BaseReqresTest {
                 .header("Authorization", "Bearer " + token)
                 .header("userId", USER_ID)
                 .pathParam("email", "max_dr" + randomNumber() + "@mail.ru")
+                .log().uri()
+                .log().headers()
+                .log().parameters()
+                .log().body()
                 .when().
                 log().uri()
                 .post(ADD_EMAIL_PATH)
@@ -73,6 +80,10 @@ public class LoginTests extends BaseReqresTest {
                 .header("userId", USER_ID)
                 .body(TRANSFER_DTO)
                 .contentType(JSON)
+                .log().uri()
+                .log().headers()
+                .log().parameters()
+                .log().body()
                 .when().
                 log().uri()
                 .post(TRANSFER_PATH)
